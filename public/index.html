@@ -20,19 +20,61 @@
 -->
     <!-- <script type="text/babel" src="scripts/example.js"></script> -->
     <script type="text/babel">
+
+      /**
+       * 1) React module contains React's core methods
+       * 2) ReactDOM module contains React's DOM specific methods
+       *
+       * createClass: This creates a React component. Pass methods into createClass
+       * in the form of an object. render method in createClass is used to return a
+       * tree of React components which render into HTML.
+       */
+
       var CommentBox = React.createClass({
         render: function(){
           return(
+            /**
+             * Notice the JSX - we have <div> to create these elements rather than
+             * using createElement.
+             */
             <div className="commentBox">
               This is a comment box. THis is in JSX.
+              <CommentList /> //These 2 have been hoisted from below.
+              <CommentForm /> //Instances of CommentList and CommentForm.
             </div>
           );
         }
       });
 
+      var CommentList = React.createClass({
+        render: function(){
+          return(
+            <div className="commentList">
+              Comment list here...
+            </div>
+          );
+        }
+      });
+
+      var CommentForm = React.createClass({
+        render: function(){
+          return(
+            <div className="commentForm">
+              Comment form will go here...
+            </div>
+          );
+        }
+      });
+
+      /**
+       * ReactDOM module contains React's DOM specific methods.
+       *
+       * The render method should always come after the classes have been
+       * composed. So it's important its here, at the bottom.
+       */
       ReactDOM.render(
-        <CommentBox />,
-        document.getElementById('content')
+        <CommentBox />, //Create an instance of the CommentBox created above.
+        document.getElementById('content') //Put it in this element.
       )
 
     </script>
