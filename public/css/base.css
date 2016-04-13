@@ -60,3 +60,12 @@ p, ul {
 ul {
   padding-left: 30px;
 }
+
+/* My stuff */
+.comment{
+  margin-bottom:25px;
+}
+
+.commentAuthor{
+  font-size:10px;
+}

@@ -22,6 +22,28 @@
     <script type="text/babel">
 
       /**
+       * Data model
+       */
+       var commentData = [
+         {
+           id:1,
+           author: 'Apollo Creed',
+           commentText: 'This is it maaaannn!!'
+         },
+         {
+           id:2,
+           author: 'Ivan Drago',
+           commentText: 'If he dies, he dies'
+         },
+         {
+           id:3,
+           author: 'Gypsy Joe',
+           commentText: 'I got my ass beat by New Jack.'
+         }
+       ];
+
+
+      /**
        * 1) React module contains React's core methods
        * 2) ReactDOM module contains React's DOM specific methods
        *
@@ -38,11 +60,19 @@
             /**
              * Notice the JSX - we have <div> to create these elements rather than
              * using createElement.
+             *
+             * A "tree" of components can be seen below.
+             * Heres an example: CommentBox contains CommentForm and CommentList, CommentList
+             * contains Comment, see here:
+             * - CommentBox
+             * -- CommentList
+             * ---- Comment
+             * -- CommentForm
              */
             <div className="commentBox">
               This is a comment box. THis is in JSX.
               <h1>Comments</h1> {/*Can mix HTML in with JSX. React JSX compiles these using React.createElement(tagName) */}
-              <CommentList /> {/*These 2 have been hoisted from below.*/}
+              <CommentList data={this.props.commentData} /> {/*These 2 have been hoisted from below.*/}
 
               <h3>Leave your own comment</h3>
               <CommentForm /> {/*Instances of CommentList and CommentForm.*/}
@@ -53,12 +83,14 @@
 
       /**
        * CommentList component
+       * Comment ccmponent instances are here.
        */
       var CommentList = React.createClass({
         render: function(){
           return(
             <div className="commentList">
-              Comment list here...
+              <Comment author="Apollo Creed">This is it man!!!</Comment> {//Component property set here is author.}
+              <Comment author="Rocky"><span>Children is everything in here....</span></Comment>
             </div>
           );
         }
@@ -81,17 +113,20 @@
       /**
        * Properties can be passed from parent to child components.
        * The Comment component below will inherit properties to display comment text
-       * and the author from comment form.
+       * and the author from comment list.
        *
        * Properties are accessed using this.props. {} JS can be included inside
        * curly brackets. See below.
+       *
+       * this.props can have a property key (like author) or children, which accesses
+       * any nested elements.
        */
       var Comment = React.createClass({
         render: function(){
           return(
             <div className="comment">
-              <span className="commentText">{}</span>
-              <span className="commentAuthor"></span>
+              <span className="commentText">{this.props.children}</span><br />
+              <span className="commentAuthor"><strong>{this.props.author}</strong></span>
             </div>
           );
         }
@@ -102,9 +137,14 @@
        *
        * The render method should always come after the classes have been
        * composed. So it's important its here, at the bottom.
+       *
+       * We're including commentData JSON data in here to push into the comment
+       * component tree. CommentBox is the top level and the rest are below, so
+       * they'll be able to access this data. This can be accessed in below
+       * components with this.props.commentData.
        */
       ReactDOM.render(
-        <CommentBox />, //Create an instance of the CommentBox created above.
+        <CommentBox commentData={commentData} />, //Create an instance of the CommentBox created above.
         document.getElementById('content') //Put it in this element.
       )
 
