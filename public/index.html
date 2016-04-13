@@ -28,6 +28,8 @@
        * createClass: This creates a React component. Pass methods into createClass
        * in the form of an object. render method in createClass is used to return a
        * tree of React components which render into HTML.
+       *
+       * CommentBox component is created below.
        */
 
       var CommentBox = React.createClass({
@@ -49,6 +51,9 @@
         }
       });
 
+      /**
+       * CommentList component
+       */
       var CommentList = React.createClass({
         render: function(){
           return(
@@ -59,11 +64,34 @@
         }
       });
 
+      /**
+       * CommentForm component
+       */
       var CommentForm = React.createClass({
         render: function(){
           return(
             <div className="commentForm">
               Comment form will go here...
+            </div>
+          );
+        }
+      });
+
+
+      /**
+       * Properties can be passed from parent to child components.
+       * The Comment component below will inherit properties to display comment text
+       * and the author from comment form.
+       *
+       * Properties are accessed using this.props. {} JS can be included inside
+       * curly brackets. See below.
+       */
+      var Comment = React.createClass({
+        render: function(){
+          return(
+            <div className="comment">
+              <span className="commentText">{}</span>
+              <span className="commentAuthor"></span>
             </div>
           );
         }
