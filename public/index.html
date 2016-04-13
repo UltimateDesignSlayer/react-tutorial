@@ -39,8 +39,11 @@
              */
             <div className="commentBox">
               This is a comment box. THis is in JSX.
-              <CommentList /> //These 2 have been hoisted from below.
-              <CommentForm /> //Instances of CommentList and CommentForm.
+              <h1>Comments</h1> {/*Can mix HTML in with JSX. React JSX compiles these using React.createElement(tagName) */}
+              <CommentList /> {/*These 2 have been hoisted from below.*/}
+
+              <h3>Leave your own comment</h3>
+              <CommentForm /> {/*Instances of CommentList and CommentForm.*/}
             </div>
           );
         }
