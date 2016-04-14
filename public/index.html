@@ -22,7 +22,7 @@
     <script type="text/babel">
 
       /**
-       * Data model
+       * Hardcoded Data model
        */
        var commentData = [
          {
@@ -55,6 +55,27 @@
        */
 
       var CommentBox = React.createClass({
+        getComments: function(){
+          $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+              this.setState({data: data}); // State being updated from initial empty to data from server. Component will re-render
+            }.bind(this),
+            error: function(xhr, status, err) {
+              console.error(this.props.url, status, err.toString());
+            }.bind(this)
+          });
+        },
+        getInitialState: function(){
+          return {data: []}; //Important to initialize to get a fresh view.
+        },
+        componentDidMount: function(){
+          //this method (componentDidMount) fires automatically when this component is run
+          this.getComments();
+          setInterval(this.getComments, 2000); //Poll server for data every 2 secs
+        },
         render: function(){
           return(
             /**
@@ -70,9 +91,8 @@
              * -- CommentForm
              */
             <div className="commentBox">
-              This is a comment box. THis is in JSX.
-              <h1>Comments</h1> {/*Can mix HTML in with JSX. React JSX compiles these using React.createElement(tagName) */}
-              <CommentList data={this.props.commentData} /> {/*These 2 have been hoisted from below.*/}
+              <h1>Comments</h1> {/* <-- Can mix HTML in with JSX. React JSX compiles these using React.createElement(tagName) */}
+              <CommentList data={this.state.data} /> {/*These 2 have been hoisted from below.*/}
 
               <h3>Leave your own comment</h3>
               <CommentForm /> {/*Instances of CommentList and CommentForm.*/}
@@ -83,14 +103,29 @@
 
       /**
        * CommentList component
-       * Comment ccmponent instances are here.
+       * Comment component instances are here.
        */
       var CommentList = React.createClass({
         render: function(){
+          /**
+           * Use commentData
+           * Using .map below, which fires a callback for each item in an array;
+           * in this case commentData.
+           *
+           * Each item in the map iterator should have a unique key (else we get
+           * a JS error). So we're using ID from the JSON.
+           */
+           var commentNode = this.props.data.map(function(comment){
+             return(
+               <Comment author={comment.author} key={comment.id}>
+                  <span>{comment.id}) {comment.commentText}</span>
+               </Comment>
+             );
+           });
+
           return(
             <div className="commentList">
-              <Comment author="Apollo Creed">This is it man!!!</Comment> {//Component property set here is author.}
-              <Comment author="Rocky"><span>Children is everything in here....</span></Comment>
+              {commentNode}
             </div>
           );
         }
@@ -100,11 +135,36 @@
        * CommentForm component
        */
       var CommentForm = React.createClass({
+        getInitialState: function(){
+          return {author: '', commentText: ''};
+        },
+        updateAuthor: function(event){
+          //handle when author is input in form
+          this.setState({author: event.target.value});
+        },
+        updateComment: function(event){
+          //handle when comment field is input in form
+          this.setState({commentText: event.target.value});
+        },
+        submitCommentForm: function(event){
+          event.preventDefault(); //stop browser from submitting the form as usual.
+          var author = this.state.author.trim(); //get author state. trimming unneeded space and crap.
+          var comment = this.state.commentText.trim();
+
+          if (!author || !comment){
+            return false; //stop here if author or comment are empty
+          }
+
+          this.setState({author: '', commentText: ''}); //update states here to default again.
+
+        },
         render: function(){
           return(
-            <div className="commentForm">
-              Comment form will go here...
-            </div>
+            <form className="commentForm" onSubmit="{this.submitCommentForm}">
+              <input type="text" placeolder="Name" value={this.state.author} onChange={this.updateAuthor} /> //this.state.author observes whats happening to author property
+              <input type="text" placeolder="Comment" value={this.state.commentText} onChange={this.updateComment} />
+              <input type="submit" value="Post" />
+            </form>
           );
         }
       });
@@ -144,7 +204,20 @@
        * components with this.props.commentData.
        */
       ReactDOM.render(
-        <CommentBox commentData={commentData} />, //Create an instance of the CommentBox created above.
+        //<CommentBox commentData={commentData} />, //Create an instance of the CommentBox created above. This line, we're getting the hardcoded data from above.
+
+        /**
+         * The CommentBox component will have to re-render itself when it gets the
+         * data from the server. Also when data is updated.
+         *
+         * this.state - Like and observable in KO. looks at the state of the data is in and updates. Doesn't
+         * render only once.
+         * this.setState() can update the state. When state updates, the component
+         * re-renders. So we have a property called "name", if this property is updated
+         * it would be like this: this.setState({name: "new value here"})
+         */
+
+        <CommentBox url="/api/comments" />, //Create an instance of the CommentBox created above. Endpoint URL of where to get data from.
         document.getElementById('content') //Put it in this element.
       )
 
