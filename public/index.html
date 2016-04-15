@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/base.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react-dom.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.16/browser.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.16/browser.js"></script><!-- For ECMAscript6 support/JSX Tranformation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
   </head>
@@ -155,14 +155,18 @@
             return false; //stop here if author or comment are empty
           }
 
+          //SEND to server and store comment with author name.
+
           this.setState({author: '', commentText: ''}); //update states here to default again.
 
         },
+
+        //this.state.author observes whats happening to author property (see below)
         render: function(){
           return(
-            <form className="commentForm" onSubmit="{this.submitCommentForm}">
-              <input type="text" placeolder="Name" value={this.state.author} onChange={this.updateAuthor} /> //this.state.author observes whats happening to author property
-              <input type="text" placeolder="Comment" value={this.state.commentText} onChange={this.updateComment} />
+            <form className="commentForm" onSubmit={this.submitCommentForm}>
+              <input type="text" placeholder="Name" value={this.state.author} onChange={this.updateAuthor} />
+              <input type="text" placeholder="Comment" value={this.state.commentText} onChange={this.updateComment} />
               <input type="submit" value="Post" />
             </form>
           );
